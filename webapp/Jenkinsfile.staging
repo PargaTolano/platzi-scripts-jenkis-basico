@@ -5,12 +5,12 @@ pipeline {
   }
 
   parameters {
-    string(name: 'ARTIFACT_ID', defautValue: 'staging', description: '')
+    string(name: 'ARTIFACT_ID', defaultValue: 'staging', description: '')
   }
 
-   environment {
-        VERCEL_TOKEN = credentials('VERCEL_TOKEN')
-    }
+  environment {
+    VERCEL_TOKEN = credentials('VERCEL_TOKEN')
+  }
 
   options {
     timeout(time: 2, unit: 'MINUTES')
@@ -20,13 +20,12 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          withCredentials([string(credentialsId: 'VERCEL_TOKEN', variable: 'VERCEL_TOKEN')]) {
             sh '''ECHO "FROM $ARTIFACT_ID >> Dockerfile && vercel deploy --yes'''
-          }
         }
       }
     }
   }
+  
   post {
     always {
         cleanWs()
