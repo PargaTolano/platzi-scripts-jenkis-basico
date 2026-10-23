@@ -20,12 +20,12 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-            sh '''ECHO "FROM $ARTIFACT_ID >> Dockerfile && vercel deploy --yes'''
+            sh '''echo "FROM $ARTIFACT_ID" >> Dockerfile.vercel && vercel deploy --yes --token=$VERCEL_TOKEN'''
         }
       }
     }
   }
-  
+
   post {
     always {
         cleanWs()
