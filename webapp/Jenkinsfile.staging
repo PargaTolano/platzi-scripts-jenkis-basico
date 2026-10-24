@@ -29,7 +29,7 @@ pipeline {
     stage('Accepting Tests') {
       steps {
         script {
-          sh "curl $resultUrl/add/3/4 | grep 7"
+          sh "vercel curl $resultUrl/add/3/ --token=$VERCEL_TOKEN | grep 7"
         }
       }
     }
