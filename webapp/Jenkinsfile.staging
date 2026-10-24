@@ -20,7 +20,16 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-            sh '''echo "FROM $ARTIFACT_ID" >> Dockerfile.vercel && vercel deploy --yes --token=$VERCEL_TOKEN'''
+            sh '''echo "FROM $ARTIFACT_ID" >> Dockerfile.vercel'''
+            // save resultUrl
+            resultUrl = sh(script: "vercel deploy --yes --token=$VERCEL_TOKEN", returnStdout: true).trim()
+        }
+      }
+    }
+    stage('Accepting Tests') {
+      steps {
+        script {
+          sh "curl $resultUrl/add/3/4 | grep 7"
         }
       }
     }
