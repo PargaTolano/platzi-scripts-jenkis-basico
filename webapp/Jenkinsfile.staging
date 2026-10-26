@@ -20,7 +20,7 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-            sh '''echo "FROM $ARTIFACT_ID" >> Dockerfile.vercel'''
+            sh "echo 'FROM $ARTIFACT_ID' >> Dockerfile.vercel"
             // save resultUrl
             resultUrl = sh(script: "vercel deploy --yes --token=$VERCEL_TOKEN", returnStdout: true).trim()
         }
@@ -36,6 +36,9 @@ pipeline {
   }
 
   post {
+    success {
+      build job: 'devops-professional-platzi/deploy-webapp-production', parameters: [string(name: 'ARTIFACT_ID', value: "${env.ARTIFACT_ID}")], wait: false
+    }
     always {
         cleanWs()
     }

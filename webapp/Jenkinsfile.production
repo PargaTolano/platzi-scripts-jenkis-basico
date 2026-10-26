@@ -1,0 +1,43 @@
+pipeline {
+  agent any
+  tools {
+    nodejs '26.12.0'
+  }
+
+  parameters {
+    string(name: 'ARTIFACT_ID', defaultValue: 'staging', description: '')
+  }
+
+  environment {
+    VERCEL_TOKEN = credentials('VERCEL_TOKEN')
+  }
+
+  options {
+    timeout(time: 2, unit: 'MINUTES')
+  }
+
+  stages {
+    stage('Deploy') {
+      steps {
+        script {
+            sh "echo 'FROM $ARTIFACT_ID' >> Dockerfile.vercel"
+            // save resultUrl
+            resultUrl = sh(script: "vercel deploy --yes --token=$VERCEL_TOKEN", returnStdout: true).trim()
+        }
+      }
+    }
+    stage('Accepting Tests') {
+      steps {
+        script {
+          sh "vercel curl $resultUrl/add/3/4 | grep 7"
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+        cleanWs()
+    }
+  }
+}
