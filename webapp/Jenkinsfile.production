@@ -10,6 +10,7 @@ pipeline {
 
   environment {
     VERCEL_TOKEN = credentials('VERCEL_TOKEN')
+    VERCEL_AUTOMATION_BYPASS_SECRET = credentials('VERCEL_AUTOMATION_BYPASS_SECRET')
   }
 
   options {
@@ -29,7 +30,7 @@ pipeline {
     stage('Accepting Tests') {
       steps {
         script {
-          sh "vercel curl $resultUrl/add/3/4 | grep 7"
+          sh "vercel curl /add/3/4 --deployment $resultUrl --token=$VERCEL_TOKEN | grep 7"
         }
       }
     }
